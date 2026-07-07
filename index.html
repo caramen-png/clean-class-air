@@ -22,7 +22,7 @@ body{
   inset:0;
   z-index:-5;
   background:
-    radial-gradient(circle at 20% 10%,rgba(255,255,255,.7),transparent 20%),
+    radial-gradient(circle at 20% 10%,rgba(255,255,255,.75),transparent 20%),
     linear-gradient(to bottom,#77cfff,#e6f8ff 45%,#9bd36f);
 }
 
@@ -142,7 +142,7 @@ button:hover{
   to{transform:translateY(-10px)}
 }
 
-.rain,.wind,.dust{
+.rain,.wind,.dust,.cloudy{
   position:absolute;
   inset:0;
   display:none;
@@ -192,6 +192,11 @@ button:hover{
 
 @keyframes dustMove{
   to{transform:translate(25px,-20px)}
+}
+
+.cloudy{
+  background:rgba(80,100,120,.22);
+  backdrop-filter:brightness(.8);
 }
 
 .dark{
@@ -272,6 +277,7 @@ button:hover{
     <div class="rain" id="rain"></div>
     <div class="wind" id="wind"></div>
     <div class="dust" id="dust"></div>
+    <div class="cloudy" id="cloudy"></div>
     <div class="weather-emoji" id="emoji"></div>
   </div>
 
@@ -359,7 +365,7 @@ function clearScreen(){
     el.innerHTML="";
   });
 
-  ["sun","rain","wind","dust","emoji"].forEach(id=>{
+  ["sun","rain","wind","dust","cloudy","emoji"].forEach(id=>{
     document.getElementById(id).style.display="none";
   });
 
@@ -368,17 +374,50 @@ function clearScreen(){
   scene.className="scene";
 }
 
-function scoreCalc(pm25,aqi,rain,wind,humidity){
+function weatherText(code){
+  const map={
+    0:"맑음",
+    1:"대체로 맑음",
+    2:"부분적으로 흐림",
+    3:"흐림",
+    45:"안개",
+    48:"짙은 안개",
+    51:"약한 이슬비",
+    53:"이슬비",
+    55:"강한 이슬비",
+    61:"약한 비",
+    63:"비",
+    65:"강한 비",
+    80:"약한 소나기",
+    81:"소나기",
+    82:"강한 소나기",
+    95:"천둥번개",
+    96:"우박 동반 천둥번개",
+    99:"강한 우박 동반 천둥번개"
+  };
+  return map[code] || "날씨 정보";
+}
+
+function isRainy(code,rain){
+  return rain>0 || [51,53,55,61,63,65,80,81,82,95,96,99].includes(code);
+}
+
+function isCloudy(code){
+  return [2,3,45,48].includes(code);
+}
+
+function scoreCalc(pm25,aqi,rain,wind,humidity,code){
   let score=100;
 
   if(pm25>15)score-=15;
   if(pm25>35)score-=25;
   if(aqi>50)score-=15;
   if(aqi>100)score-=25;
-  if(rain>0)score-=25;
+  if(isRainy(code,rain))score-=25;
   if(wind>25)score-=15;
   if(humidity>80)score-=10;
   if(humidity<30)score-=8;
+  if(isCloudy(code))score-=5;
 
   return Math.max(0,score);
 }
@@ -389,7 +428,7 @@ async function checkAir(){
   const [lat,lon,cityName,cityKey]=document.getElementById("city").value.split(",");
 
   const weatherUrl =
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&timezone=auto&forecast_days=1`;
+  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weather_code&timezone=auto&forecast_days=1`;
 
   const airUrl =
   `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto&forecast_days=1`;
@@ -411,12 +450,13 @@ async function checkAir(){
     const humidity=weatherData.current.relative_humidity_2m;
     const wind=weatherData.current.wind_speed_10m;
     const rain=weatherData.current.precipitation;
+    const code=weatherData.current.weather_code;
 
     const pm25=airData.current.pm2_5;
     const pm10=airData.current.pm10;
     const aqi=airData.current.us_aqi;
 
-    const score=scoreCalc(pm25,aqi,rain,wind,humidity);
+    const score=scoreCalc(pm25,aqi,rain,wind,humidity,code);
 
     const scene=document.getElementById("scene");
     const city=cityStyles[cityKey];
@@ -444,10 +484,10 @@ async function checkAir(){
       `;
       scene.classList.add("dark");
     }
-    else if(rain>0){
+    else if(isRainy(code,rain)){
       document.getElementById("rain").style.display="block";
       emoji="☔";
-      message="비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
+      message="비가 오거나 비가 올 가능성이 있는 날씨예요.";
       action=`
         <strong>오늘 추천 행동</strong><br>
         ✅ 창문 5~10분만 짧게 열기<br>
@@ -469,6 +509,18 @@ async function checkAir(){
         ✅ 책상 위 종이 정리하기<br>
         ✅ 쓰레기 줍기<br>
         ✅ 식물이 넘어지지 않게 확인하기
+      `;
+    }
+    else if(isCloudy(code)){
+      document.getElementById("cloudy").style.display="block";
+      emoji="☁️";
+      message="조금 흐리지만 짧게 환기하기에는 괜찮아요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ✅ 창문 10분 정도 열기<br>
+        ✅ 교실 바닥 확인하기<br>
+        ✅ 싱고니움 상태 확인하기<br>
+        ✅ 쓰레기 줍기
       `;
     }
     else if(score>=80){
@@ -504,6 +556,7 @@ async function checkAir(){
     document.getElementById("result").innerHTML=`
       <strong>${cityName} 현재 상태</strong><br>
       기준 시간: ${weatherData.current.time}<br>
+      현재 날씨: ${weatherText(code)}<br>
       온도: ${temp}℃<br>
       습도: ${humidity}%<br>
       바람 세기: ${wind} km/h<br>
