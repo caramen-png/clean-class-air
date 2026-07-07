@@ -273,9 +273,23 @@ button:hover{background:#2e7d32}
 }
 
 .score{
-  font-weight:bold;
-  color:#2e7d32;
-  font-size:19px;
+
+background:linear-gradient(135deg,#f4fff2,#ffffff);
+
+border:2px solid #43a047;
+
+box-shadow:0 8px 18px rgba(0,0,0,.12);
+
+border-radius:18px;
+
+padding:18px;
+
+font-weight:bold;
+
+font-size:19px;
+
+color:#2e7d32;
+
 }
 
 .action{
@@ -575,20 +589,78 @@ async function checkAir(){
     const now=new Date();
 
     document.getElementById("result").innerHTML=`
-      <strong>${cityName} 현재 상태</strong><br>
-      기준 시간: ${weatherData.current.time}<br>
-      현재 날씨: ${weatherText(code)}<br>
-      온도: ${temp}℃<br>
-      습도: ${humidity}%<br>
-      바람 세기: ${wind} km/h<br>
-      강수량: ${rain} mm<br>
-      초미세먼지(PM2.5): ${pm25}㎍/㎥<br>
-      미세먼지(PM10): ${pm10}㎍/㎥<br>
-      공기질 지수(AQI): ${aqi}<br>
-      <div class="source">자료 출처: Open-Meteo Weather & Air Quality API</div>
-    `;
+<strong>${cityName} 현재 상태</strong><br>
 
-    document.getElementById("score").innerText=`환기 점수: ${score}점 / 100점`;
+기준 시간: ${weatherData.current.time}<br>
+
+현재 날씨: ${weatherText(code)}<br><br>
+
+🌡️ 온도 : <b>${temp}℃</b><br>
+
+💧 습도 : <b>${humidity}%</b>
+<span style="color:#666;"> (쾌적 40~60%)</span><br>
+
+🌬️ 바람 : <b>${wind} km/h</b>
+<span style="color:#666;"> (권장 25km/h 이하)</span><br>
+
+🌧️ 강수량 : <b>${rain} mm</b><br>
+
+😷 초미세먼지(PM2.5) :
+<b>${pm25}㎍/㎥</b>
+<span style="color:#666;"> (기준 ≤15)</span><br>
+
+🍃 미세먼지(PM10) :
+<b>${pm10}㎍/㎥</b>
+<span style="color:#666;"> (기준 ≤45)</span><br>
+
+🌍 공기질지수(AQI) :
+<b>${aqi}</b>
+<span style="color:#666;"> (좋음 0~50)</span><br>
+
+<div class="source">
+자료 출처 : Open-Meteo Weather & Air Quality API
+</div>
+`;
+
+    let scoreColor="";
+let scoreText="";
+
+if(score>=90){
+    scoreColor="#2e7d32";
+    scoreText="🟢 매우 좋음";
+}
+else if(score>=70){
+    scoreColor="#8bc34a";
+    scoreText="🟡 좋음";
+}
+else if(score>=50){
+    scoreColor="#fb8c00";
+    scoreText="🟠 보통";
+}
+else{
+    scoreColor="#d32f2f";
+    scoreText="🔴 환기 비추천";
+}
+
+document.getElementById("score").innerHTML=
+`
+<div style="
+font-size:24px;
+font-weight:bold;
+color:${scoreColor};
+">
+환기 점수 ${score}점
+</div>
+
+<div style="
+font-size:18px;
+margin-top:6px;
+font-weight:bold;
+color:${scoreColor};
+">
+${scoreText}
+</div>
+`;
     document.getElementById("message").innerText=message;
     document.getElementById("action").innerHTML="<strong>오늘 추천 행동</strong><br>"+action;
     document.getElementById("update").innerText=
