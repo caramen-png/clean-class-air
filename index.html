@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clean Class Air</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eef7f2;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .app {
+      background: white;
+      padding: 25px;
+      border-radius: 20px;
+      max-width: 450px;
+      margin: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      color: #2e7d32;
+    }
+
+    select, button {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    button {
+      background: #4caf50;
+      color: white;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .message {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1b5e20;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <h1>🌿 Clean Class Air</h1>
+    <p>오늘 환기해도 좋은 날인지 확인해보세요.</p>
+
+    <select id="city">
+      <option value="37.5665,126.9780,서울">대한민국 서울</option>
+      <option value="35.1796,129.0756,부산">대한민국 부산</option>
+      <option value="21.0285,105.8542,하노이">베트남 하노이</option>
+      <option value="10.8231,106.6297,호치민">베트남 호치민</option>
+      <option value="16.0544,108.2022,다낭">베트남 다낭</option>
+    </select>
+
+    <br />
+
+    <button onclick="checkAir()">환기 추천 확인하기</button>
+
+    <div class="result" id="result"></div>
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    async function checkAir() {
+      const selected = document.getElementById("city").value;
+      const [lat, lon, cityName] = selected.split(",");
+
+      const weatherUrl =
+        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`;
+
+      const airUrl =
+        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi`;
+
+      try {
+        const weatherResponse = await fetch(weatherUrl);
+        const airResponse = await fetch(airUrl);
+
+        const weatherData = await weatherResponse.json();
+        const airData = await airResponse.json();
+
+        const temp = weatherData.current.temperature_2m;
+        const humidity = weatherData.current.relative_humidity_2m;
+        const wind = weatherData.current.wind_speed_10m;
+        const rain = weatherData.current.precipitation;
+
+        const pm25 = airData.current.pm2_5;
+        const pm10 = airData.current.pm10;
+        const aqi = airData.current.us_aqi;
+
+        let message = "";
+
+        if (pm25 <= 15 && aqi <= 50 && rain === 0 && wind < 25) {
+          message = "🌿 오늘은 환기하기 딱 좋은 날씨네요!";
+        } else if (pm25 <= 35 && aqi <= 100 && rain === 0) {
+          message = "🙂 짧게 환기하기에는 괜찮은 날이에요.";
+        } else {
+          message = "😷 오늘은 환기를 오래 하기보다 공기 상태를 더 지켜보는 게 좋아요.";
+        }
+
+        document.getElementById("result").innerHTML = `
+          <strong>${cityName} 현재 상태</strong><br>
+          온도: ${temp}℃<br>
+          습도: ${humidity}%<br>
+          바람: ${wind} km/h<br>
+          강수량: ${rain} mm<br>
+          PM2.5: ${pm25}㎍/㎥<br>
+          PM10: ${pm10}㎍/㎥<br>
+          AQI: ${aqi}
+        `;
+
+        document.getElementById("message").innerText = message;
+
+      } catch (error) {
+        document.getElementById("message").innerText =
+          "날씨 정보를 불러오지 못했습니다.";
+      }
+    }
+  </script>
+
+</body>
+</html>
