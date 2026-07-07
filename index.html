@@ -1,135 +1,304 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Clean Class Air</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef7f2;
-      padding: 30px;
-      text-align: center;
-    }
+<meta charset="UTF-8">
+<title>Clean Class Air</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  min-height:100vh;
+  overflow-x:hidden;
+  background:linear-gradient(#9edcff,#d8f7c5);
+}
+.bg{
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:linear-gradient(#8fd3ff 0%,#d9f7ff 45%,#8bd66f 100%);
+}
+.cloud{
+  position:fixed;
+  width:130px;height:45px;
+  background:white;
+  border-radius:40px;
+  opacity:.75;
+  animation:cloudMove 18s linear infinite;
+  z-index:-2;
+}
+.cloud:before,.cloud:after{
+  content:"";
+  position:absolute;
+  background:white;
+  border-radius:50%;
+}
+.cloud:before{width:60px;height:60px;top:-25px;left:20px}
+.cloud:after{width:75px;height:75px;top:-35px;right:15px}
+.c1{top:80px;left:-160px}
+.c2{top:170px;left:-260px;animation-delay:6s}
+@keyframes cloudMove{to{transform:translateX(130vw)}}
 
-    .app {
-      background: white;
-      padding: 25px;
-      border-radius: 20px;
-      max-width: 450px;
-      margin: auto;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-    }
+.app{
+  max-width:560px;
+  margin:45px auto;
+  padding:25px;
+  background:rgba(255,255,255,.92);
+  border-radius:25px;
+  box-shadow:0 8px 25px rgba(0,0,0,.2);
+}
+h1{color:#1b5e20}
+select,button{
+  width:90%;
+  padding:13px;
+  margin:10px;
+  font-size:16px;
+  border-radius:12px;
+  border:1px solid #bbb;
+}
+button{
+  background:#43a047;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+button:hover{background:#2e7d32}
 
-    h1 {
-      color: #2e7d32;
-    }
+.landmark{
+  position:relative;
+  height:230px;
+  margin-top:20px;
+  border-radius:20px;
+  overflow:hidden;
+  background-size:cover;
+  background-position:center;
+  display:none;
+}
+.landmark.dark{filter:brightness(.55)}
+.landmark.dust{filter:brightness(.65) blur(2px)}
+.landmark.sunny{filter:brightness(1.18)}
 
-    select, button {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      font-size: 15px;
-    }
+.sun{
+  position:absolute;
+  top:20px;right:25px;
+  font-size:55px;
+  animation:spin 5s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-    button {
-      background: #4caf50;
-      color: white;
-      cursor: pointer;
-    }
+.rain{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  display:none;
+}
+.drop{
+  position:absolute;
+  width:2px;height:22px;
+  background:rgba(255,255,255,.8);
+  animation:rainFall .8s linear infinite;
+}
+@keyframes rainFall{
+  from{transform:translateY(-30px)}
+  to{transform:translateY(260px)}
+}
 
-    .result {
-      margin-top: 20px;
-      font-size: 17px;
-      line-height: 1.7;
-    }
+.mask{
+  position:absolute;
+  bottom:15px;right:20px;
+  font-size:55px;
+  display:none;
+  animation:bounce 1s infinite alternate;
+}
+@keyframes bounce{to{transform:translateY(-8px)}}
 
-    .message {
-      font-size: 20px;
-      font-weight: bold;
-      color: #1b5e20;
-      margin-top: 15px;
-    }
-  </style>
+.result,.message,.tip{
+  margin-top:18px;
+  line-height:1.7;
+  opacity:0;
+}
+.show{
+  animation:fadeIn .8s forwards;
+}
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.message{
+  font-size:21px;
+  font-weight:bold;
+  color:#1b5e20;
+}
+.tip{
+  background:#eefaf0;
+  padding:12px;
+  border-radius:15px;
+}
+.date{color:#33691e;font-weight:bold}
+</style>
 </head>
+
 <body>
+<div class="bg"></div>
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
 
-  <div class="app">
-    <h1>🌿 Clean Class Air</h1>
-    <p>오늘 환기해도 좋은 날인지 확인해보세요.</p>
+<div class="app">
+  <h1>🌿 Clean Class Air</h1>
+  <p class="date" id="date"></p>
+  <p>오늘 환기해도 좋은 날인지 확인해보세요.</p>
 
-    <select id="city">
-      <option value="37.5665,126.9780,서울">대한민국 서울</option>
-      <option value="35.1796,129.0756,부산">대한민국 부산</option>
-      <option value="21.0285,105.8542,하노이">베트남 하노이</option>
-      <option value="10.8231,106.6297,호치민">베트남 호치민</option>
-      <option value="16.0544,108.2022,다낭">베트남 다낭</option>
-    </select>
+  <select id="city">
+    <option value="37.5665,126.9780,서울,seoul">🇰🇷 대한민국 서울</option>
+    <option value="35.1796,129.0756,부산,busan">🇰🇷 대한민국 부산</option>
+    <option value="21.0285,105.8542,하노이,hanoi">🇻🇳 베트남 하노이</option>
+    <option value="10.8231,106.6297,호치민,hochiminh">🇻🇳 베트남 호치민</option>
+    <option value="16.0544,108.2022,다낭,danang">🇻🇳 베트남 다낭</option>
+  </select>
 
-    <br />
+  <button onclick="checkAir()">환기 추천 확인하기</button>
 
-    <button onclick="checkAir()">환기 추천 확인하기</button>
-
-    <div class="result" id="result"></div>
-    <div class="message" id="message"></div>
+  <div class="landmark" id="landmark">
+    <div class="sun" id="sun">☀️</div>
+    <div class="rain" id="rain"></div>
+    <div class="mask" id="mask">😷</div>
   </div>
 
-  <script>
-    async function checkAir() {
-      const selected = document.getElementById("city").value;
-      const [lat, lon, cityName] = selected.split(",");
+  <div class="result" id="result"></div>
+  <div class="message" id="message"></div>
+  <div class="tip" id="tip"></div>
+</div>
 
-      const weatherUrl =
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`;
+<script>
+const landmarkImages = {
+  seoul:"https://images.unsplash.com/photo-1538485399081-7c8ed4c7339e?auto=format&fit=crop&w=900&q=80",
+  busan:"https://images.unsplash.com/photo-1608971955821-7f18c75d5033?auto=format&fit=crop&w=900&q=80",
+  hanoi:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=900&q=80",
+  hochiminh:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=900&q=80",
+  danang:"https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=900&q=80"
+};
 
-      const airUrl =
-        `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi`;
+function setDate(){
+  const now = new Date();
+  document.getElementById("date").innerText =
+    now.toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
+}
+setDate();
 
-      try {
-        const weatherResponse = await fetch(weatherUrl);
-        const airResponse = await fetch(airUrl);
+function makeRain(){
+  const rain = document.getElementById("rain");
+  rain.innerHTML = "";
+  for(let i=0;i<45;i++){
+    const d=document.createElement("div");
+    d.className="drop";
+    d.style.left=Math.random()*100+"%";
+    d.style.animationDelay=Math.random()+"s";
+    rain.appendChild(d);
+  }
+}
+makeRain();
 
-        const weatherData = await weatherResponse.json();
-        const airData = await airResponse.json();
+document.getElementById("city").addEventListener("change", () => {
+  clearScreen();
+  checkAir();
+});
 
-        const temp = weatherData.current.temperature_2m;
-        const humidity = weatherData.current.relative_humidity_2m;
-        const wind = weatherData.current.wind_speed_10m;
-        const rain = weatherData.current.precipitation;
+function clearScreen(){
+  ["result","message","tip"].forEach(id=>{
+    const el=document.getElementById(id);
+    el.classList.remove("show");
+    el.innerHTML="";
+  });
+  const landmark=document.getElementById("landmark");
+  landmark.className="landmark";
+  document.getElementById("sun").style.display="none";
+  document.getElementById("rain").style.display="none";
+  document.getElementById("mask").style.display="none";
+}
 
-        const pm25 = airData.current.pm2_5;
-        const pm10 = airData.current.pm10;
-        const aqi = airData.current.us_aqi;
+async function checkAir(){
+  clearScreen();
 
-        let message = "";
+  const selected=document.getElementById("city").value;
+  const [lat,lon,cityName,cityKey]=selected.split(",");
 
-        if (pm25 <= 15 && aqi <= 50 && rain === 0 && wind < 25) {
-          message = "🌿 오늘은 환기하기 딱 좋은 날씨네요!";
-        } else if (pm25 <= 35 && aqi <= 100 && rain === 0) {
-          message = "🙂 짧게 환기하기에는 괜찮은 날이에요.";
-        } else {
-          message = "😷 오늘은 환기를 오래 하기보다 공기 상태를 더 지켜보는 게 좋아요.";
-        }
+  const weatherUrl=
+  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`;
 
-        document.getElementById("result").innerHTML = `
-          <strong>${cityName} 현재 상태</strong><br>
-          온도: ${temp}℃<br>
-          습도: ${humidity}%<br>
-          바람: ${wind} km/h<br>
-          강수량: ${rain} mm<br>
-          PM2.5: ${pm25}㎍/㎥<br>
-          PM10: ${pm10}㎍/㎥<br>
-          AQI: ${aqi}
-        `;
+  const airUrl=
+  `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi`;
 
-        document.getElementById("message").innerText = message;
+  try{
+    const weatherResponse=await fetch(weatherUrl);
+    const airResponse=await fetch(airUrl);
+    const weatherData=await weatherResponse.json();
+    const airData=await airResponse.json();
 
-      } catch (error) {
-        document.getElementById("message").innerText =
-          "날씨 정보를 불러오지 못했습니다.";
-      }
+    const temp=weatherData.current.temperature_2m;
+    const humidity=weatherData.current.relative_humidity_2m;
+    const wind=weatherData.current.wind_speed_10m;
+    const rain=weatherData.current.precipitation;
+    const pm25=airData.current.pm2_5;
+    const pm10=airData.current.pm10;
+    const aqi=airData.current.us_aqi;
+
+    const landmark=document.getElementById("landmark");
+    landmark.style.display="block";
+    landmark.style.backgroundImage=`url('${landmarkImages[cityKey]}')`;
+
+    let message="";
+    let tip="";
+
+    if(pm25<=15 && aqi<=50 && rain===0 && wind<25){
+      landmark.classList.add("sunny");
+      document.getElementById("sun").style.display="block";
+      message="🌿 오늘은 환기하기 딱 좋은 날씨네요!";
+      tip="창문을 15~20분 정도 열어 교실 공기를 바꿔보세요. 식물에게도 좋은 날이에요.";
     }
-  </script>
+    else if(rain>0){
+      landmark.classList.add("dark");
+      document.getElementById("rain").style.display="block";
+      message="🌧️ 비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
+      tip="비 오는 날은 습도가 높을 수 있으니 창문을 오래 열기보다는 잠깐만 환기하세요.";
+    }
+    else if(pm25>35 || aqi>100){
+      landmark.classList.add("dust");
+      document.getElementById("mask").style.display="block";
+      message="😷 미세먼지가 많아요. 마스크 착용을 권장합니다.";
+      tip="오늘은 환기를 오래 하지 말고, 교실 청소와 식물 관리에 집중하는 것이 좋아요.";
+    }
+    else{
+      message="🙂 짧게 환기하기에는 괜찮은 날이에요.";
+      tip="10분 정도 가볍게 환기하면 교실 공기를 개선하는 데 도움이 됩니다.";
+    }
 
+    document.getElementById("result").innerHTML=`
+      <strong>${cityName} 현재 상태</strong><br>
+      온도: ${temp}℃<br>
+      습도: ${humidity}%<br>
+      바람: ${wind} km/h<br>
+      강수량: ${rain} mm<br>
+      PM2.5: ${pm25}㎍/㎥<br>
+      PM10: ${pm10}㎍/㎥<br>
+      AQI: ${aqi}
+    `;
+
+    document.getElementById("message").innerText=message;
+    document.getElementById("tip").innerText=tip;
+
+    setTimeout(()=>{
+      document.getElementById("result").classList.add("show");
+      document.getElementById("message").classList.add("show");
+      document.getElementById("tip").classList.add("show");
+    },100);
+
+  }catch(error){
+    document.getElementById("message").innerText="날씨 정보를 불러오지 못했습니다.";
+    document.getElementById("message").classList.add("show");
+  }
+}
+</script>
 </body>
 </html>
