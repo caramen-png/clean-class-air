@@ -43,9 +43,7 @@ body{
   animation:sway 2s infinite alternate;
 }
 
-@keyframes sway{
-  to{transform:rotate(5deg)}
-}
+@keyframes sway{to{transform:rotate(5deg)}}
 
 .app{
   width:92%;
@@ -58,15 +56,42 @@ body{
   box-shadow:0 12px 35px rgba(0,0,0,.24);
 }
 
-h1{
+.title{
   margin:8px 0;
   color:#1b5e20;
   font-size:31px;
+  cursor:pointer;
 }
 
 .subtitle{
   color:#33691e;
   font-weight:bold;
+}
+
+.start-screen{
+  padding:30px 10px;
+}
+
+.start-title{
+  font-size:25px;
+  font-weight:bold;
+  color:#1b5e20;
+  margin:20px 0 10px;
+}
+
+.start-desc{
+  line-height:1.7;
+  color:#33691e;
+}
+
+.start-btn{
+  margin-top:25px;
+  font-size:18px;
+  padding:15px;
+}
+
+.main-screen{
+  display:none;
 }
 
 select,button{
@@ -86,9 +111,7 @@ button{
   cursor:pointer;
 }
 
-button:hover{
-  background:#2e7d32;
-}
+button:hover{background:#2e7d32}
 
 .scene{
   position:relative;
@@ -124,9 +147,7 @@ button:hover{
   animation:spin 5s linear infinite;
 }
 
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 .weather-emoji{
   position:absolute;
@@ -138,11 +159,9 @@ button:hover{
   animation:bounce 1s infinite alternate;
 }
 
-@keyframes bounce{
-  to{transform:translateY(-10px)}
-}
+@keyframes bounce{to{transform:translateY(-10px)}}
 
-.rain,.wind,.dust,.cloudy{
+.rain,.drizzle,.hail,.wind,.dust,.cloudy,.fog,.thunder{
   position:absolute;
   inset:0;
   display:none;
@@ -157,7 +176,29 @@ button:hover{
   animation:rainFall .75s linear infinite;
 }
 
+.drizzle-drop{
+  position:absolute;
+  width:1px;
+  height:14px;
+  background:rgba(255,255,255,.75);
+  animation:rainFall 1.3s linear infinite;
+}
+
 @keyframes rainFall{
+  from{transform:translateY(-40px)}
+  to{transform:translateY(310px)}
+}
+
+.hail-ball{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:white;
+  animation:hailFall .65s linear infinite;
+}
+
+@keyframes hailFall{
   from{transform:translateY(-40px)}
   to{transform:translateY(310px)}
 }
@@ -190,18 +231,30 @@ button:hover{
   animation:dustMove 3s infinite alternate;
 }
 
-@keyframes dustMove{
-  to{transform:translate(25px,-20px)}
-}
+@keyframes dustMove{to{transform:translate(25px,-20px)}}
 
 .cloudy{
   background:rgba(80,100,120,.22);
   backdrop-filter:brightness(.8);
 }
 
-.dark{
-  filter:brightness(.65);
+.fog{
+  background:rgba(220,230,230,.4);
+  backdrop-filter:blur(4px) brightness(.85);
 }
+
+.thunder{
+  background:rgba(20,30,50,.28);
+  animation:flash 2.5s infinite;
+}
+
+@keyframes flash{
+  0%,85%,100%{background:rgba(20,30,50,.28)}
+  88%{background:rgba(255,255,255,.55)}
+  92%{background:rgba(20,30,50,.28)}
+}
+
+.dark{filter:brightness(.65)}
 
 .card{
   margin-top:17px;
@@ -236,9 +289,7 @@ button:hover{
   color:#555;
 }
 
-.show{
-  animation:fadeIn .8s forwards;
-}
+.show{animation:fadeIn .8s forwards}
 
 @keyframes fadeIn{
   from{opacity:0;transform:translateY(12px)}
@@ -246,7 +297,7 @@ button:hover{
 }
 
 @media(max-width:600px){
-  h1{font-size:27px}
+  .title{font-size:27px}
   .scene{height:225px}
   .clean,.plant{font-size:48px}
 }
@@ -260,70 +311,80 @@ button:hover{
 <div class="plant">🪴</div>
 
 <div class="app">
-  <h1>🌿 생팸 Clean Air</h1>
+  <h1 class="title" onclick="goHome()">🌿 생팸 CLEAN AIR</h1>
   <p id="date" class="subtitle"></p>
-  <p>베트남 교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
+  <p>하노이한국국제학교 교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
 
-  <select id="city">
-    <option value="21.0285,105.8542,하노이,hanoi">🇻🇳 하노이</option>
-    <option value="10.8231,106.6297,호치민,hochiminh">🇻🇳 호치민</option>
-    <option value="16.0544,108.2022,다낭,danang">🇻🇳 다낭</option>
-  </select>
-
-  <button onclick="checkAir()">환기 추천 확인하기</button>
-
-  <div class="scene" id="scene">
-    <div class="sun" id="sun">☀️</div>
-    <div class="rain" id="rain"></div>
-    <div class="wind" id="wind"></div>
-    <div class="dust" id="dust"></div>
-    <div class="cloudy" id="cloudy"></div>
-    <div class="weather-emoji" id="emoji"></div>
+  <div class="start-screen" id="startScreen">
+    <div class="start-title">오늘의 환기 측정하기</div>
+    <div class="start-desc">
+      실시간 날씨와 공기질을 확인해<br>
+      교실 환기, 청소, 식물 관리 행동을 추천합니다.
+    </div>
+    <button class="start-btn" onclick="startApp()">시작하기</button>
   </div>
 
-  <div class="card" id="result"></div>
-  <div class="card score" id="score"></div>
-  <div class="card message" id="message"></div>
-  <div class="card action" id="action"></div>
-  <div class="card update" id="update"></div>
+  <div class="main-screen" id="mainScreen">
+    <select id="city">
+      <option value="21.0285,105.8542,하노이,hanoi">🇻🇳 하노이</option>
+      <option value="10.8231,106.6297,호치민,hochiminh">🇻🇳 호치민</option>
+      <option value="16.0544,108.2022,다낭,danang">🇻🇳 다낭</option>
+    </select>
+
+    <button onclick="checkAir()">환기 추천 확인하기</button>
+
+    <div class="scene" id="scene">
+      <div class="sun" id="sun">☀️</div>
+      <div class="rain" id="rain"></div>
+      <div class="drizzle" id="drizzle"></div>
+      <div class="hail" id="hail"></div>
+      <div class="wind" id="wind"></div>
+      <div class="dust" id="dust"></div>
+      <div class="cloudy" id="cloudy"></div>
+      <div class="fog" id="fog"></div>
+      <div class="thunder" id="thunder"></div>
+      <div class="weather-emoji" id="emoji"></div>
+    </div>
+
+    <div class="card" id="result"></div>
+    <div class="card score" id="score"></div>
+    <div class="card message" id="message"></div>
+    <div class="card action" id="action"></div>
+    <div class="card update" id="update"></div>
+  </div>
 </div>
 
 <script>
 const cityStyles = {
-  hanoi:{
-    name:"하노이",
-    image:"hanoi.jpg",
-    fallback:"linear-gradient(135deg,#a5d6a7,#2e7d32)"
-  },
-  hochiminh:{
-    name:"호치민",
-    image:"hcm.jpg",
-    fallback:"linear-gradient(135deg,#ffcc80,#ef6c00)"
-  },
-  danang:{
-    name:"다낭",
-    image:"danang.jpg",
-    fallback:"linear-gradient(135deg,#80deea,#00838f)"
-  }
+  hanoi:{name:"하노이",image:"hanoi.jpg",fallback:"linear-gradient(135deg,#a5d6a7,#2e7d32)"},
+  hochiminh:{name:"호치민",image:"hcm.jpg",fallback:"linear-gradient(135deg,#ffcc80,#ef6c00)"},
+  danang:{name:"다낭",image:"danang.jpg",fallback:"linear-gradient(135deg,#80deea,#00838f)"}
 };
 
 document.getElementById("date").innerText =
-  new Date().toLocaleDateString("ko-KR",{
-    year:"numeric",
-    month:"long",
-    day:"numeric",
-    weekday:"long"
-  });
+  new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
 
-function makeRain(){
-  const rain=document.getElementById("rain");
-  rain.innerHTML="";
-  for(let i=0;i<60;i++){
+function startApp(){
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("mainScreen").style.display="block";
+  checkAir();
+}
+
+function goHome(){
+  document.getElementById("mainScreen").style.display="none";
+  document.getElementById("startScreen").style.display="block";
+  clearScreen();
+}
+
+function makeRainLike(id,className,count){
+  const box=document.getElementById(id);
+  box.innerHTML="";
+  for(let i=0;i<count;i++){
     const d=document.createElement("div");
-    d.className="drop";
+    d.className=className;
     d.style.left=Math.random()*100+"%";
     d.style.animationDelay=Math.random()+"s";
-    rain.appendChild(d);
+    box.appendChild(d);
   }
 }
 
@@ -352,7 +413,9 @@ function makeDust(){
   }
 }
 
-makeRain();
+makeRainLike("rain","drop",60);
+makeRainLike("drizzle","drizzle-drop",45);
+makeRainLike("hail","hail-ball",35);
 makeWind();
 makeDust();
 
@@ -365,7 +428,7 @@ function clearScreen(){
     el.innerHTML="";
   });
 
-  ["sun","rain","wind","dust","cloudy","emoji"].forEach(id=>{
+  ["sun","rain","drizzle","hail","wind","dust","cloudy","fog","thunder","emoji"].forEach(id=>{
     document.getElementById(id).style.display="none";
   });
 
@@ -376,49 +439,27 @@ function clearScreen(){
 
 function weatherText(code){
   const map={
-    0:"맑음",
-    1:"대체로 맑음",
-    2:"부분적으로 흐림",
-    3:"흐림",
-    45:"안개",
-    48:"짙은 안개",
-    51:"약한 이슬비",
-    53:"이슬비",
-    55:"강한 이슬비",
-    61:"약한 비",
-    63:"비",
-    65:"강한 비",
-    80:"약한 소나기",
-    81:"소나기",
-    82:"강한 소나기",
-    95:"천둥번개",
-    96:"우박 동반 천둥번개",
-    99:"강한 우박 동반 천둥번개"
+    0:"맑음",1:"대체로 맑음",2:"부분적으로 흐림",3:"흐림",
+    45:"안개",48:"짙은 안개",
+    51:"약한 이슬비",53:"이슬비",55:"강한 이슬비",
+    61:"약한 비",63:"비",65:"강한 비",
+    80:"약한 소나기",81:"소나기",82:"강한 소나기",
+    95:"천둥번개",96:"우박 동반 천둥번개",99:"강한 우박 동반 천둥번개"
   };
   return map[code] || "날씨 정보";
 }
 
-function isRainy(code,rain){
-  return rain>0 || [51,53,55,61,63,65,80,81,82,95,96,99].includes(code);
-}
-
-function isCloudy(code){
-  return [2,3,45,48].includes(code);
-}
-
 function scoreCalc(pm25,aqi,rain,wind,humidity,code){
   let score=100;
-
   if(pm25>15)score-=15;
   if(pm25>35)score-=25;
   if(aqi>50)score-=15;
   if(aqi>100)score-=25;
-  if(isRainy(code,rain))score-=25;
+  if([51,53,55,61,63,65,80,81,82,95,96,99].includes(code)||rain>0)score-=25;
   if(wind>25)score-=15;
   if(humidity>80)score-=10;
   if(humidity<30)score-=8;
-  if(isCloudy(code))score-=5;
-
+  if([2,3,45,48].includes(code))score-=5;
   return Math.max(0,score);
 }
 
@@ -434,14 +475,8 @@ async function checkAir(){
   `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto&forecast_days=1`;
 
   try{
-    const [weatherResponse,airResponse]=await Promise.all([
-      fetch(weatherUrl),
-      fetch(airUrl)
-    ]);
-
-    if(!weatherResponse.ok || !airResponse.ok){
-      throw new Error("API error");
-    }
+    const [weatherResponse,airResponse]=await Promise.all([fetch(weatherUrl),fetch(airUrl)]);
+    if(!weatherResponse.ok || !airResponse.ok) throw new Error("API error");
 
     const weatherData=await weatherResponse.json();
     const airData=await airResponse.json();
@@ -451,11 +486,9 @@ async function checkAir(){
     const wind=weatherData.current.wind_speed_10m;
     const rain=weatherData.current.precipitation;
     const code=weatherData.current.weather_code;
-
     const pm25=airData.current.pm2_5;
     const pm10=airData.current.pm10;
     const aqi=airData.current.us_aqi;
-
     const score=scoreCalc(pm25,aqi,rain,wind,humidity,code);
 
     const scene=document.getElementById("scene");
@@ -466,86 +499,74 @@ async function checkAir(){
       `linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.08)), url('${city.image}'), ${city.fallback}`;
     scene.style.setProperty("--cityname",`"${city.name}"`);
 
-    let emoji="";
-    let message="";
-    let action="";
+    let emoji="",message="",action="";
 
     if(pm25>35 || aqi>100){
       document.getElementById("dust").style.display="block";
       emoji="😷";
       message="초미세먼지나 공기질이 좋지 않아요.";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ❌ 긴 시간 환기 금지<br>
-        ✅ 마스크 착용 권장<br>
-        ✅ 교실 바닥 먼지 정리하기<br>
-        ✅ 싱고니움 상태 확인하기<br>
-        ✅ 쓰레기 줍고 교실 청결 유지하기
-      `;
+      action="❌ 긴 시간 환기 금지<br>✅ 마스크 착용 권장<br>✅ 교실 바닥 먼지 정리하기<br>✅ 싱고니움 상태 확인하기<br>✅ 쓰레기 줍고 교실 청결 유지하기";
       scene.classList.add("dark");
     }
-    else if(isRainy(code,rain)){
+    else if([96,99].includes(code)){
+      document.getElementById("hail").style.display="block";
+      document.getElementById("thunder").style.display="block";
+      emoji="⛈️";
+      message="우박이나 천둥번개가 있는 위험한 날씨예요.";
+      action="❌ 환기 자제<br>✅ 창문 닫기<br>✅ 젖은 바닥 확인하기<br>✅ 안전하게 교실 정리하기";
+      scene.classList.add("dark");
+    }
+    else if(code===95){
+      document.getElementById("rain").style.display="block";
+      document.getElementById("thunder").style.display="block";
+      emoji="⛈️";
+      message="천둥번개가 있어요. 환기는 자제하는 것이 좋아요.";
+      action="❌ 창문 열기 자제<br>✅ 전기기기 주변 정리<br>✅ 바닥 미끄럼 확인<br>✅ 교실 안전 유지";
+      scene.classList.add("dark");
+    }
+    else if([51,53,55].includes(code)){
+      document.getElementById("drizzle").style.display="block";
+      emoji="🌦️";
+      message="이슬비가 내려요. 아주 짧은 환기만 추천해요.";
+      action="✅ 창문 3~5분만 열기<br>✅ 습도 확인하기<br>✅ 젖은 우산 정리하기<br>✅ 교실 바닥 확인하기";
+      scene.classList.add("dark");
+    }
+    else if([61,63,65,80,81,82].includes(code)||rain>0){
       document.getElementById("rain").style.display="block";
       emoji="☔";
-      message="비가 오거나 비가 올 가능성이 있는 날씨예요.";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ✅ 창문 5~10분만 짧게 열기<br>
-        ✅ 젖은 우산 정리하기<br>
-        ✅ 바닥 미끄럼 주의하기<br>
-        ✅ 교실 습도 확인하기<br>
-        ✅ 쓰레기통 주변 정리하기
-      `;
+      message="비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
+      action="✅ 창문 5~10분만 짧게 열기<br>✅ 젖은 우산 정리하기<br>✅ 바닥 미끄럼 주의하기<br>✅ 교실 습도 확인하기<br>✅ 쓰레기통 주변 정리하기";
+      scene.classList.add("dark");
+    }
+    else if([45,48].includes(code)){
+      document.getElementById("fog").style.display="block";
+      emoji="🌫️";
+      message="안개가 있어요. 공기 상태를 확인하며 짧게 환기하세요.";
+      action="✅ 창문 5~10분만 열기<br>✅ 공기질 확인하기<br>✅ 교실 먼지 정리하기<br>✅ 식물 상태 확인하기";
       scene.classList.add("dark");
     }
     else if(wind>=25){
       document.getElementById("wind").style.display="block";
       emoji="🌬️";
       message="바람이 강해요. 창문을 조심해서 열어야 해요.";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ✅ 창문 조금만 열기<br>
-        ✅ 문 세게 닫힘 주의하기<br>
-        ✅ 책상 위 종이 정리하기<br>
-        ✅ 쓰레기 줍기<br>
-        ✅ 식물이 넘어지지 않게 확인하기
-      `;
+      action="✅ 창문 조금만 열기<br>✅ 문 세게 닫힘 주의하기<br>✅ 책상 위 종이 정리하기<br>✅ 쓰레기 줍기<br>✅ 식물이 넘어지지 않게 확인하기";
     }
-    else if(isCloudy(code)){
+    else if([2,3].includes(code)){
       document.getElementById("cloudy").style.display="block";
       emoji="☁️";
       message="조금 흐리지만 짧게 환기하기에는 괜찮아요.";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ✅ 창문 10분 정도 열기<br>
-        ✅ 교실 바닥 확인하기<br>
-        ✅ 싱고니움 상태 확인하기<br>
-        ✅ 쓰레기 줍기
-      `;
+      action="✅ 창문 10분 정도 열기<br>✅ 교실 바닥 확인하기<br>✅ 싱고니움 상태 확인하기<br>✅ 쓰레기 줍기";
     }
     else if(score>=80){
       document.getElementById("sun").style.display="block";
       emoji="🌞";
       message="오늘은 환기하기 좋은 날씨네요!";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ✅ 창문 15~20분 열기<br>
-        ✅ 교실 쓰레기 줍기<br>
-        ✅ 싱고니움 햇빛 확인하기<br>
-        ✅ 깨끗한 공기 유지하기<br>
-        ✅ 친구들에게 환기 시간 알려주기
-      `;
+      action="✅ 창문 15~20분 열기<br>✅ 교실 쓰레기 줍기<br>✅ 싱고니움 햇빛 확인하기<br>✅ 깨끗한 공기 유지하기<br>✅ 친구들에게 환기 시간 알려주기";
     }
     else{
       emoji="🙂";
       message="짧게 환기하기에는 괜찮은 날이에요.";
-      action=`
-        <strong>오늘 추천 행동</strong><br>
-        ✅ 창문 10분 정도 열기<br>
-        ✅ 교실 바닥 확인하기<br>
-        ✅ 식물 상태 확인하기<br>
-        ✅ 쓰레기 줍기
-      `;
+      action="✅ 창문 10분 정도 열기<br>✅ 교실 바닥 확인하기<br>✅ 식물 상태 확인하기<br>✅ 쓰레기 줍기";
     }
 
     document.getElementById("emoji").innerText=emoji;
@@ -569,7 +590,7 @@ async function checkAir(){
 
     document.getElementById("score").innerText=`환기 점수: ${score}점 / 100점`;
     document.getElementById("message").innerText=message;
-    document.getElementById("action").innerHTML=action;
+    document.getElementById("action").innerHTML="<strong>오늘 추천 행동</strong><br>"+action;
     document.getElementById("update").innerText=
       `마지막 확인: ${now.toLocaleTimeString("ko-KR")} / 5분마다 자동 재측정`;
 
@@ -586,8 +607,11 @@ async function checkAir(){
   }
 }
 
-checkAir();
-setInterval(checkAir,5*60*1000);
+setInterval(()=>{
+  if(document.getElementById("mainScreen").style.display==="block"){
+    checkAir();
+  }
+},5*60*1000);
 </script>
 
 </body>
