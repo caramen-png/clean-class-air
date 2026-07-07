@@ -3,106 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <title>Clean Class Air</title>
-
 <style>
 *{box-sizing:border-box}
-
 body{
   margin:0;
   min-height:100vh;
   font-family:Arial,sans-serif;
   text-align:center;
+  background:linear-gradient(#8fd3ff,#d8f7d2);
   overflow-x:hidden;
-  background:linear-gradient(#9bdcff,#d8f7d2);
 }
-
-/* 전체 배경 */
-.bg{
+.city-bg{
   position:fixed;
   inset:0;
   z-index:-5;
-  background:
-    linear-gradient(to bottom,#8fd3ff 0%,#dff7ff 42%,#b8e986 70%,#7acb65 100%);
+  background:linear-gradient(to bottom,#80d8ff 0%,#e1f5fe 45%,#a5d6a7 100%);
 }
-
-/* 교실 느낌 바닥 */
-.classroom-floor{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  height:120px;
-  background:linear-gradient(45deg,#d9b382,#f3d7a4);
-  z-index:-4;
-}
-
-/* 식물 */
-.plant{
-  position:fixed;
-  bottom:75px;
-  left:25px;
-  font-size:70px;
-  animation:plantMove 2.5s infinite alternate ease-in-out;
-  z-index:-2;
-}
-@keyframes plantMove{
-  to{transform:rotate(4deg)}
-}
-
-/* 청결 아이콘 */
-.clean-icons{
-  position:fixed;
-  bottom:90px;
-  right:25px;
-  font-size:55px;
-  z-index:-2;
-}
-
-/* 구름 */
-.cloud{
-  position:fixed;
-  width:130px;
-  height:45px;
-  background:white;
-  border-radius:40px;
-  opacity:.75;
-  animation:cloudMove 18s linear infinite;
-  z-index:-3;
-}
-.cloud:before,.cloud:after{
+.city-bg:before{
   content:"";
   position:absolute;
-  background:white;
-  border-radius:50%;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:230px;
+  background:
+    linear-gradient(to top,#4caf50 0 25%,transparent 25%),
+    repeating-linear-gradient(to right,#455a64 0 45px,#607d8b 45px 85px,#37474f 85px 130px);
+  clip-path:polygon(0 45%,8% 45%,8% 25%,15% 25%,15% 50%,22% 50%,22% 18%,30% 18%,30% 48%,39% 48%,39% 30%,47% 30%,47% 52%,57% 52%,57% 15%,66% 15%,66% 48%,75% 48%,75% 28%,84% 28%,84% 50%,100% 50%,100% 100%,0 100%);
+  opacity:.85;
 }
-.cloud:before{width:60px;height:60px;top:-25px;left:20px}
-.cloud:after{width:75px;height:75px;top:-35px;right:15px}
-.c1{top:80px;left:-160px}
-.c2{top:170px;left:-260px;animation-delay:6s}
-@keyframes cloudMove{
-  to{transform:translateX(130vw)}
+.clean{
+  position:fixed;
+  bottom:30px;
+  left:25px;
+  font-size:65px;
+  z-index:-2;
 }
-
-/* 앱 카드 */
+.plant{
+  position:fixed;
+  bottom:35px;
+  right:25px;
+  font-size:70px;
+  z-index:-2;
+  animation:sway 2s infinite alternate;
+}
+@keyframes sway{to{transform:rotate(5deg)}}
 .app{
   max-width:590px;
+  width:92%;
   margin:35px auto;
   padding:25px;
-  background:rgba(255,255,255,.93);
+  background:rgba(255,255,255,.94);
   border-radius:28px;
   box-shadow:0 10px 30px rgba(0,0,0,.22);
-  backdrop-filter:blur(6px);
 }
-
-h1{
-  color:#1b5e20;
-  margin-bottom:5px;
-}
-
-.date{
-  color:#33691e;
-  font-weight:bold;
-}
-
+h1{color:#1b5e20}
 select,button{
   width:90%;
   padding:13px;
@@ -111,130 +66,87 @@ select,button{
   border-radius:13px;
   border:1px solid #bbb;
 }
-
 button{
   background:#43a047;
   color:white;
   border:none;
   cursor:pointer;
-  transition:.2s;
 }
-button:hover{
-  background:#2e7d32;
-  transform:scale(1.03);
-}
-
-/* 랜드마크 */
-.landmark{
+.scene{
   position:relative;
   height:250px;
   margin-top:20px;
   border-radius:22px;
   overflow:hidden;
   display:none;
-  background-size:cover;
-  background-position:center;
+  background:linear-gradient(to bottom,#81d4fa,#e3f2fd 55%,#66bb6a 56%);
   box-shadow:0 6px 18px rgba(0,0,0,.25);
 }
-
-.landmark::after{
+.scene:before{
   content:"";
   position:absolute;
-  inset:0;
-  background:linear-gradient(to top,rgba(0,0,0,.35),transparent);
-  pointer-events:none;
+  bottom:45px;
+  left:0;
+  width:100%;
+  height:120px;
+  background:var(--skyline);
+  z-index:1;
 }
-
-.landmark.sunny{
-  filter:brightness(1.15) saturate(1.15);
-}
-
-.landmark.rainy{
-  filter:brightness(.55) saturate(.8);
-}
-
-.landmark.dusty{
-  filter:brightness(.65) blur(1.3px) grayscale(.25);
-}
-
-.landmark.windy{
-  filter:brightness(1.05) saturate(1.1);
-}
-
-/* 날씨 이모지 */
-.weather-emoji{
+.scene:after{
+  content:var(--cityname);
   position:absolute;
-  bottom:18px;
-  right:20px;
-  font-size:62px;
+  left:18px;
+  bottom:15px;
+  color:white;
+  font-size:24px;
+  font-weight:bold;
+  text-shadow:0 2px 6px black;
   z-index:5;
-  display:none;
-  animation:bounce 1s infinite alternate;
 }
-@keyframes bounce{
-  to{transform:translateY(-10px)}
-}
-
-/* 햇빛 */
 .sun{
   position:absolute;
-  top:18px;
-  right:22px;
-  font-size:60px;
+  top:20px;
+  right:25px;
+  font-size:58px;
   display:none;
-  z-index:5;
   animation:spin 5s linear infinite;
+  z-index:5;
 }
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-/* 비 */
-.rain{
+@keyframes spin{to{transform:rotate(360deg)}}
+.weather-emoji{
   position:absolute;
-  inset:0;
+  right:20px;
+  bottom:18px;
+  font-size:62px;
   display:none;
-  z-index:4;
+  z-index:6;
+  animation:bounce 1s infinite alternate;
 }
+@keyframes bounce{to{transform:translateY(-10px)}}
+.rain,.wind,.dust{position:absolute;inset:0;display:none;z-index:4}
 .drop{
   position:absolute;
   width:2px;
-  height:24px;
-  background:rgba(255,255,255,.85);
+  height:25px;
+  background:white;
   animation:rainFall .75s linear infinite;
 }
-@keyframes rainFall{
-  from{transform:translateY(-40px)}
-  to{transform:translateY(290px)}
-}
-
-/* 바람 */
-.wind{
-  position:absolute;
-  inset:0;
-  display:none;
-  z-index:4;
-}
+@keyframes rainFall{to{transform:translateY(280px)}}
 .wind-line{
   position:absolute;
+  width:120px;
   height:3px;
-  width:110px;
-  background:rgba(255,255,255,.85);
+  background:white;
   border-radius:30px;
-  animation:windMove 1.3s linear infinite;
+  animation:windMove 1.2s linear infinite;
 }
 @keyframes windMove{
-  from{transform:translateX(-160px)}
+  from{transform:translateX(-150px)}
   to{transform:translateX(700px)}
 }
-
-/* 미세먼지 */
 .dust{
-  position:absolute;
-  inset:0;
-  display:none;
-  z-index:4;
-  background:rgba(90,80,70,.25);
+  background:rgba(90,80,70,.28);
+  backdrop-filter:blur(2px);
 }
 .dust-particle{
   position:absolute;
@@ -244,71 +156,45 @@ button:hover{
   background:rgba(80,70,60,.45);
   animation:dustMove 3s infinite alternate;
 }
-@keyframes dustMove{
-  to{transform:translate(25px,-20px)}
-}
-
-/* 결과 */
-.result,.message,.tip{
+@keyframes dustMove{to{transform:translate(25px,-20px)}}
+.dark{filter:brightness(.6)}
+.result,.message,.tip,.score{
   margin-top:18px;
   line-height:1.7;
   opacity:0;
 }
-
-.show{
-  animation:fadeIn .8s forwards;
-}
-
+.show{animation:fadeIn .8s forwards}
 @keyframes fadeIn{
   from{opacity:0;transform:translateY(12px)}
   to{opacity:1;transform:translateY(0)}
 }
-
 .message{
   font-size:21px;
   font-weight:bold;
   color:#1b5e20;
 }
-
 .tip{
   background:#eefaf0;
   padding:13px;
   border-radius:16px;
   border-left:6px solid #43a047;
 }
-
 .score{
-  margin-top:15px;
-  font-size:18px;
   font-weight:bold;
   color:#2e7d32;
-}
-
-@media(max-width:600px){
-  .app{
-    width:92%;
-    margin:25px auto;
-  }
-  .landmark{
-    height:220px;
-  }
 }
 </style>
 </head>
 
 <body>
-
-<div class="bg"></div>
-<div class="classroom-floor"></div>
-<div class="cloud c1"></div>
-<div class="cloud c2"></div>
+<div class="city-bg"></div>
+<div class="clean">🧹✨</div>
 <div class="plant">🪴</div>
-<div class="clean-icons">🧹✨</div>
 
 <div class="app">
   <h1>🌿 Clean Class Air</h1>
-  <p class="date" id="date"></p>
-  <p>교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
+  <p id="date"></p>
+  <p>검증된 날씨 데이터를 바탕으로 환기하기 좋은 날을 추천합니다.</p>
 
   <select id="city">
     <option value="37.5665,126.9780,서울,seoul">🇰🇷 대한민국 서울</option>
@@ -320,7 +206,7 @@ button:hover{
 
   <button onclick="checkAir()">환기 추천 확인하기</button>
 
-  <div class="landmark" id="landmark">
+  <div class="scene" id="scene">
     <div class="sun" id="sun">☀️</div>
     <div class="rain" id="rain"></div>
     <div class="wind" id="wind"></div>
@@ -335,228 +221,194 @@ button:hover{
 </div>
 
 <script>
-const landmarkImages = {
-  seoul: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/N_Seoul_Tower_viewed_from_the_National_Museum_of_Korea.jpg/1280px-N_Seoul_Tower_viewed_from_the_National_Museum_of_Korea.jpg",
-  busan: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gwangan_Bridge_Busan_Korea.jpg/1280px-Gwangan_Bridge_Busan_Korea.jpg",
-  hanoi: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0c/Hoan_Kiem_Lake_Hanoi.jpg/1280px-Hoan_Kiem_Lake_Hanoi.jpg",
-  hochiminh: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Ben_Thanh_market_2.jpg/1280px-Ben_Thanh_market_2.jpg",
-  danang: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Dragon_Bridge_in_Da_Nang.jpg/1280px-Dragon_Bridge_in_Da_Nang.jpg"
+const cityStyles = {
+  seoul:{
+    name:"서울 N서울타워",
+    skyline:"linear-gradient(to right,#37474f 0 18%,transparent 18% 23%,#263238 23% 35%,transparent 35% 42%,#455a64 42% 56%,transparent 56% 61%,#263238 61% 69%,transparent 69% 100%)"
+  },
+  busan:{
+    name:"부산 광안대교",
+    skyline:"linear-gradient(to top,#1565c0 0 20%,transparent 20%),linear-gradient(to right,transparent 0 12%,#eeeeee 12% 16%,transparent 16% 32%,#eeeeee 32% 36%,transparent 36% 52%,#eeeeee 52% 56%,transparent 56% 100%)"
+  },
+  hanoi:{
+    name:"하노이 호안끼엠",
+    skyline:"linear-gradient(to right,#2e7d32 0 20%,#8d6e63 20% 32%,transparent 32% 40%,#5d4037 40% 55%,transparent 55% 100%)"
+  },
+  hochiminh:{
+    name:"호치민 벤탄시장",
+    skyline:"linear-gradient(to right,#bf360c 0 22%,transparent 22% 30%,#e65100 30% 60%,transparent 60% 100%)"
+  },
+  danang:{
+    name:"다낭 용다리",
+    skyline:"linear-gradient(to top,#0288d1 0 22%,transparent 22%),linear-gradient(to right,transparent 0 15%,#ffca28 15% 20%,transparent 20% 35%,#ffca28 35% 40%,transparent 40% 60%,#ffca28 60% 65%,transparent 65% 100%)"
+  }
 };
 
-/* 사진이 안 뜰 때 대체 배경 */
-const fallbackBackground = {
-  seoul: "linear-gradient(135deg,#90caf9,#283593)",
-  busan: "linear-gradient(135deg,#81d4fa,#006064)",
-  hanoi: "linear-gradient(135deg,#a5d6a7,#2e7d32)",
-  hochiminh: "linear-gradient(135deg,#ffcc80,#ef6c00)",
-  danang: "linear-gradient(135deg,#80deea,#00838f)"
-};
-
-function setDate(){
-  const now = new Date();
-  document.getElementById("date").innerText =
-    now.toLocaleDateString("ko-KR", {
-      year:"numeric",
-      month:"long",
-      day:"numeric",
-      weekday:"long"
-    });
-}
-setDate();
+document.getElementById("date").innerText =
+  new Date().toLocaleDateString("ko-KR",{year:"numeric",month:"long",day:"numeric",weekday:"long"});
 
 function makeRain(){
-  const rain = document.getElementById("rain");
-  rain.innerHTML = "";
+  const rain=document.getElementById("rain");
+  rain.innerHTML="";
   for(let i=0;i<55;i++){
-    const d = document.createElement("div");
-    d.className = "drop";
-    d.style.left = Math.random()*100 + "%";
-    d.style.animationDelay = Math.random() + "s";
+    const d=document.createElement("div");
+    d.className="drop";
+    d.style.left=Math.random()*100+"%";
+    d.style.animationDelay=Math.random()+"s";
     rain.appendChild(d);
   }
 }
-
 function makeWind(){
-  const wind = document.getElementById("wind");
-  wind.innerHTML = "";
+  const wind=document.getElementById("wind");
+  wind.innerHTML="";
   for(let i=0;i<9;i++){
-    const w = document.createElement("div");
-    w.className = "wind-line";
-    w.style.top = (30 + i*22) + "px";
-    w.style.animationDelay = Math.random() + "s";
+    const w=document.createElement("div");
+    w.className="wind-line";
+    w.style.top=(35+i*22)+"px";
+    w.style.animationDelay=Math.random()+"s";
     wind.appendChild(w);
   }
 }
-
 function makeDust(){
-  const dust = document.getElementById("dust");
-  dust.innerHTML = "";
+  const dust=document.getElementById("dust");
+  dust.innerHTML="";
   for(let i=0;i<35;i++){
-    const p = document.createElement("div");
-    p.className = "dust-particle";
-    p.style.left = Math.random()*100 + "%";
-    p.style.top = Math.random()*100 + "%";
-    p.style.animationDelay = Math.random()*2 + "s";
+    const p=document.createElement("div");
+    p.className="dust-particle";
+    p.style.left=Math.random()*100+"%";
+    p.style.top=Math.random()*100+"%";
+    p.style.animationDelay=Math.random()*2+"s";
     dust.appendChild(p);
   }
 }
+makeRain(); makeWind(); makeDust();
 
-makeRain();
-makeWind();
-makeDust();
-
-document.getElementById("city").addEventListener("change", () => {
-  clearScreen();
-  checkAir();
-});
+document.getElementById("city").addEventListener("change",checkAir);
 
 function clearScreen(){
   ["result","message","tip","score"].forEach(id=>{
-    const el = document.getElementById(id);
+    const el=document.getElementById(id);
     el.classList.remove("show");
-    el.innerHTML = "";
+    el.innerHTML="";
   });
-
-  const landmark = document.getElementById("landmark");
-  landmark.className = "landmark";
-  landmark.style.display = "none";
-
-  document.getElementById("sun").style.display = "none";
-  document.getElementById("rain").style.display = "none";
-  document.getElementById("wind").style.display = "none";
-  document.getElementById("dust").style.display = "none";
-
-  const emoji = document.getElementById("emoji");
-  emoji.style.display = "none";
-  emoji.innerHTML = "";
+  ["sun","rain","wind","dust","emoji"].forEach(id=>{
+    document.getElementById(id).style.display="none";
+  });
+  const scene=document.getElementById("scene");
+  scene.style.display="none";
+  scene.className="scene";
 }
 
-function ventilationScore(pm25, aqi, rain, wind, humidity){
-  let score = 100;
-
-  if(pm25 > 15) score -= 15;
-  if(pm25 > 35) score -= 25;
-  if(aqi > 50) score -= 15;
-  if(aqi > 100) score -= 25;
-  if(rain > 0) score -= 25;
-  if(wind > 25) score -= 15;
-  if(humidity > 80) score -= 10;
-  if(humidity < 30) score -= 8;
-
-  if(score < 0) score = 0;
-  return score;
+function scoreCalc(pm25,aqi,rain,wind,humidity){
+  let score=100;
+  if(pm25>15)score-=15;
+  if(pm25>35)score-=25;
+  if(aqi>50)score-=15;
+  if(aqi>100)score-=25;
+  if(rain>0)score-=25;
+  if(wind>25)score-=15;
+  if(humidity>80)score-=10;
+  if(humidity<30)score-=8;
+  return Math.max(0,score);
 }
 
 async function checkAir(){
   clearScreen();
 
-  const selected = document.getElementById("city").value;
-  const [lat, lon, cityName, cityKey] = selected.split(",");
+  const [lat,lon,cityName,cityKey]=document.getElementById("city").value.split(",");
 
   const weatherUrl =
-  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation`;
+  `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation&timezone=auto&forecast_days=1`;
 
   const airUrl =
-  `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi`;
+  `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto&forecast_days=1`;
 
   try{
-    const weatherResponse = await fetch(weatherUrl);
-    const airResponse = await fetch(airUrl);
+    const [weatherResponse,airResponse]=await Promise.all([
+      fetch(weatherUrl),
+      fetch(airUrl)
+    ]);
 
-    const weatherData = await weatherResponse.json();
-    const airData = await airResponse.json();
-
-    const temp = weatherData.current.temperature_2m;
-    const humidity = weatherData.current.relative_humidity_2m;
-    const wind = weatherData.current.wind_speed_10m;
-    const rain = weatherData.current.precipitation;
-
-    const pm25 = airData.current.pm2_5;
-    const pm10 = airData.current.pm10;
-    const aqi = airData.current.us_aqi;
-
-    const score = ventilationScore(pm25, aqi, rain, wind, humidity);
-
-    const landmark = document.getElementById("landmark");
-    const emoji = document.getElementById("emoji");
-
-    landmark.style.display = "block";
-    landmark.style.backgroundImage =
-      `url('${landmarkImages[cityKey]}'), ${fallbackBackground[cityKey]}`;
-
-    let message = "";
-    let tip = "";
-    let emojiText = "";
-
-    if(pm25 > 35 || aqi > 100){
-      landmark.classList.add("dusty");
-      document.getElementById("dust").style.display = "block";
-      emojiText = "😷";
-      message = "미세먼지가 많아요. 마스크 착용을 권장합니다.";
-      tip = "오늘은 환기를 오래 하지 말고, 교실 청소와 식물 관리에 집중하는 것이 좋아요.";
-    }
-    else if(rain > 0){
-      landmark.classList.add("rainy");
-      document.getElementById("rain").style.display = "block";
-      emojiText = "☔";
-      message = "비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
-      tip = "습도가 높을 수 있으니 창문을 오래 열기보다는 5~10분 정도만 환기하세요.";
-    }
-    else if(wind >= 25){
-      landmark.classList.add("windy");
-      document.getElementById("wind").style.display = "block";
-      emojiText = "🌬️";
-      message = "바람이 강해요. 창문을 조심해서 열어야 해요.";
-      tip = "문이 세게 닫힐 수 있으니 창문을 조금만 열고, 주변 물건을 정리한 뒤 환기하세요.";
-    }
-    else if(pm25 <= 15 && aqi <= 50 && rain === 0 && wind < 25){
-      landmark.classList.add("sunny");
-      document.getElementById("sun").style.display = "block";
-      emojiText = "🌞";
-      message = "오늘은 환기하기 딱 좋은 날씨네요!";
-      tip = "창문을 15~20분 정도 열어 교실 공기를 바꿔보세요. 싱고니움에게도 좋은 날이에요.";
-    }
-    else{
-      landmark.classList.add("sunny");
-      emojiText = "🙂";
-      message = "짧게 환기하기에는 괜찮은 날이에요.";
-      tip = "10분 정도 가볍게 환기하면 교실 공기를 개선하는 데 도움이 됩니다.";
+    if(!weatherResponse.ok || !airResponse.ok){
+      throw new Error("API error");
     }
 
-    emoji.innerHTML = emojiText;
-    emoji.style.display = "block";
+    const weatherData=await weatherResponse.json();
+    const airData=await airResponse.json();
 
-    document.getElementById("result").innerHTML = `
+    const temp=weatherData.current.temperature_2m;
+    const humidity=weatherData.current.relative_humidity_2m;
+    const wind=weatherData.current.wind_speed_10m;
+    const rain=weatherData.current.precipitation;
+    const pm25=airData.current.pm2_5;
+    const pm10=airData.current.pm10;
+    const aqi=airData.current.us_aqi;
+
+    const score=scoreCalc(pm25,aqi,rain,wind,humidity);
+
+    const scene=document.getElementById("scene");
+    scene.style.display="block";
+    scene.style.setProperty("--skyline",cityStyles[cityKey].skyline);
+    scene.style.setProperty("--cityname",`"${cityStyles[cityKey].name}"`);
+
+    let emoji="",message="",tip="";
+
+    if(pm25>35 || aqi>100){
+      document.getElementById("dust").style.display="block";
+      emoji="😷";
+      message="미세먼지가 많아요. 환기를 오래 하지 않는 게 좋아요.";
+      tip="마스크 착용을 권장하고, 오늘은 교실 청소와 식물 관리에 집중하세요.";
+      scene.classList.add("dark");
+    }else if(rain>0){
+      document.getElementById("rain").style.display="block";
+      emoji="☔";
+      message="비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
+      tip="습도가 높아질 수 있으니 5~10분 정도만 짧게 환기하세요.";
+      scene.classList.add("dark");
+    }else if(wind>=25){
+      document.getElementById("wind").style.display="block";
+      emoji="🌬️";
+      message="바람이 강해요. 창문을 조심해서 열어야 해요.";
+      tip="문이 세게 닫힐 수 있으니 창문을 조금만 열고 주변 물건을 정리하세요.";
+    }else{
+      document.getElementById("sun").style.display="block";
+      emoji="🌞";
+      message="오늘은 환기하기 좋은 날씨네요!";
+      tip="창문을 15~20분 열어 교실 공기를 바꿔보세요.";
+    }
+
+    document.getElementById("emoji").innerText=emoji;
+    document.getElementById("emoji").style.display="block";
+
+    document.getElementById("result").innerHTML=`
       <strong>${cityName} 현재 상태</strong><br>
+      측정 기준 시간: ${weatherData.current.time}<br>
       온도: ${temp}℃<br>
       습도: ${humidity}%<br>
       바람: ${wind} km/h<br>
       강수량: ${rain} mm<br>
       PM2.5: ${pm25}㎍/㎥<br>
       PM10: ${pm10}㎍/㎥<br>
-      AQI: ${aqi}
+      AQI: ${aqi}<br>
+      <small>자료 출처: Open-Meteo Weather & Air Quality API</small>
     `;
 
-    document.getElementById("score").innerHTML =
-      `환기 점수: ${score}점 / 100점`;
-
-    document.getElementById("message").innerText = message;
-    document.getElementById("tip").innerText = tip;
+    document.getElementById("score").innerText=`환기 점수: ${score}점 / 100점`;
+    document.getElementById("message").innerText=message;
+    document.getElementById("tip").innerText=tip;
 
     setTimeout(()=>{
-      document.getElementById("result").classList.add("show");
-      document.getElementById("score").classList.add("show");
-      document.getElementById("message").classList.add("show");
-      document.getElementById("tip").classList.add("show");
+      ["result","score","message","tip"].forEach(id=>{
+        document.getElementById(id).classList.add("show");
+      });
     },100);
 
   }catch(error){
-    document.getElementById("message").innerText =
-      "날씨 정보를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.";
+    document.getElementById("message").innerText=
+      "날씨 정보를 불러오지 못했습니다. 인터넷 연결 또는 API 상태를 확인해주세요.";
     document.getElementById("message").classList.add("show");
   }
 }
 </script>
-
 </body>
 </html>
