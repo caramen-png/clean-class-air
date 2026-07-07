@@ -97,7 +97,7 @@ button:hover{
   left:18px;
   bottom:16px;
   color:white;
-  font-size:25px;
+  font-size:30px;
   font-weight:bold;
   text-shadow:0 3px 8px black;
   z-index:6;
@@ -187,7 +187,7 @@ button:hover{
   filter:brightness(.65);
 }
 
-.result,.message,.tip,.score{
+.result,.message,.tip,.score,.update{
   margin-top:18px;
   line-height:1.7;
   opacity:0;
@@ -220,10 +220,9 @@ button:hover{
   color:#2e7d32;
 }
 
-.source{
+.source,.update{
   font-size:13px;
   color:#555;
-  margin-top:10px;
 }
 
 @media(max-width:600px){
@@ -243,14 +242,12 @@ button:hover{
 <div class="app">
   <h1>🌿 생팸 Clean Air</h1>
   <p id="date"></p>
-  <p>교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
+  <p>베트남 교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
 
   <select id="city">
-    <option value="37.5665,126.9780,서울,seoul">🇰🇷 대한민국 서울</option>
-    <option value="35.1796,129.0756,부산,busan">🇰🇷 대한민국 부산</option>
-    <option value="21.0285,105.8542,하노이,hanoi">🇻🇳 베트남 하노이</option>
-    <option value="10.8231,106.6297,호치민,hochiminh">🇻🇳 베트남 호치민</option>
-    <option value="16.0544,108.2022,다낭,danang">🇻🇳 베트남 다낭</option>
+    <option value="21.0285,105.8542,하노이,hanoi">🇻🇳 하노이</option>
+    <option value="10.8231,106.6297,호치민,hochiminh">🇻🇳 호치민</option>
+    <option value="16.0544,108.2022,다낭,danang">🇻🇳 다낭</option>
   </select>
 
   <button onclick="checkAir()">환기 추천 확인하기</button>
@@ -267,32 +264,23 @@ button:hover{
   <div class="score" id="score"></div>
   <div class="message" id="message"></div>
   <div class="tip" id="tip"></div>
+  <div class="update" id="update"></div>
 </div>
 
 <script>
 const cityStyles = {
-  seoul:{
-    name:"서울 도시 전경",
-    image:"https://images.unsplash.com/photo-1538485399081-7c8ed4c7339e?auto=format&fit=crop&w=1200&q=80",
-    fallback:"linear-gradient(135deg,#90caf9,#283593)"
-  },
-  busan:{
-    name:"부산 도시 전경",
-    image:"https://images.unsplash.com/photo-1540998145333-e2eef1a98277?auto=format&fit=crop&w=1200&q=80",
-    fallback:"linear-gradient(135deg,#81d4fa,#006064)"
-  },
   hanoi:{
-    name:"하노이 도시 전경",
+    name:"하노이",
     image:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80",
     fallback:"linear-gradient(135deg,#a5d6a7,#2e7d32)"
   },
   hochiminh:{
-    name:"호치민 도시 전경",
+    name:"호치민",
     image:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80",
     fallback:"linear-gradient(135deg,#ffcc80,#ef6c00)"
   },
   danang:{
-    name:"다낭 도시 전경",
+    name:"다낭",
     image:"https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
     fallback:"linear-gradient(135deg,#80deea,#00838f)"
   }
@@ -350,7 +338,7 @@ makeDust();
 document.getElementById("city").addEventListener("change",checkAir);
 
 function clearScreen(){
-  ["result","message","tip","score"].forEach(id=>{
+  ["result","message","tip","score","update"].forEach(id=>{
     const el=document.getElementById(id);
     el.classList.remove("show");
     el.innerHTML="";
@@ -459,6 +447,8 @@ async function checkAir(){
     document.getElementById("emoji").innerText=emoji;
     document.getElementById("emoji").style.display="block";
 
+    const now = new Date();
+
     document.getElementById("result").innerHTML=`
       <strong>${cityName} 현재 상태</strong><br>
       기준 시간: ${weatherData.current.time}<br>
@@ -475,9 +465,11 @@ async function checkAir(){
     document.getElementById("score").innerText=`환기 점수: ${score}점 / 100점`;
     document.getElementById("message").innerText=message;
     document.getElementById("tip").innerText=tip;
+    document.getElementById("update").innerText=
+      `마지막 확인: ${now.toLocaleTimeString("ko-KR")} / 5분마다 자동 재측정`;
 
     setTimeout(()=>{
-      ["result","score","message","tip"].forEach(id=>{
+      ["result","score","message","tip","update"].forEach(id=>{
         document.getElementById(id).classList.add("show");
       });
     },100);
@@ -488,6 +480,10 @@ async function checkAir(){
     document.getElementById("message").classList.add("show");
   }
 }
+
+checkAir();
+
+setInterval(checkAir, 5 * 60 * 1000);
 </script>
 
 </body>
