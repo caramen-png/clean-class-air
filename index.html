@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>생팸 Clean Air</title>
 
 <style>
@@ -11,32 +12,34 @@ body{
   margin:0;
   min-height:100vh;
   font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#7ecbff,#d7f7d2);
   text-align:center;
-  background:linear-gradient(#8fd3ff,#d8f7d2);
   overflow-x:hidden;
 }
 
-.city-bg{
+.bg{
   position:fixed;
   inset:0;
   z-index:-5;
-  background:linear-gradient(to bottom,#7ecbff 0%,#e3f7ff 50%,#8bc34a 100%);
+  background:
+    radial-gradient(circle at 20% 10%,rgba(255,255,255,.7),transparent 20%),
+    linear-gradient(to bottom,#77cfff,#e6f8ff 45%,#9bd36f);
 }
 
 .clean{
   position:fixed;
   bottom:25px;
-  left:25px;
-  font-size:65px;
-  z-index:-2;
+  left:22px;
+  font-size:60px;
+  z-index:-1;
 }
 
 .plant{
   position:fixed;
-  bottom:28px;
-  right:25px;
-  font-size:70px;
-  z-index:-2;
+  bottom:25px;
+  right:22px;
+  font-size:68px;
+  z-index:-1;
   animation:sway 2s infinite alternate;
 }
 
@@ -45,33 +48,41 @@ body{
 }
 
 .app{
-  max-width:600px;
   width:92%;
-  margin:35px auto;
-  padding:25px;
-  background:rgba(255,255,255,.94);
+  max-width:620px;
+  margin:28px auto;
+  padding:24px;
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(12px);
   border-radius:28px;
-  box-shadow:0 10px 30px rgba(0,0,0,.22);
+  box-shadow:0 12px 35px rgba(0,0,0,.24);
 }
 
 h1{
+  margin:8px 0;
   color:#1b5e20;
-  margin-bottom:5px;
+  font-size:31px;
+}
+
+.subtitle{
+  color:#33691e;
+  font-weight:bold;
 }
 
 select,button{
   width:90%;
-  padding:13px;
+  padding:14px;
   margin:10px;
   font-size:16px;
-  border-radius:13px;
-  border:1px solid #bbb;
+  border-radius:15px;
+  border:1px solid #cfd8dc;
 }
 
 button{
   background:#43a047;
   color:white;
   border:none;
+  font-weight:bold;
   cursor:pointer;
 }
 
@@ -81,36 +92,36 @@ button:hover{
 
 .scene{
   position:relative;
-  height:260px;
-  margin-top:20px;
-  border-radius:22px;
+  height:270px;
+  margin-top:18px;
+  border-radius:24px;
   overflow:hidden;
   display:none;
   background-size:cover;
   background-position:center;
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
 }
 
 .scene::after{
   content:var(--cityname);
   position:absolute;
-  left:18px;
-  bottom:16px;
+  left:20px;
+  bottom:18px;
   color:white;
-  font-size:30px;
+  font-size:32px;
   font-weight:bold;
-  text-shadow:0 3px 8px black;
-  z-index:6;
+  text-shadow:0 3px 10px black;
+  z-index:8;
 }
 
 .sun{
   position:absolute;
-  top:20px;
-  right:25px;
+  top:18px;
+  right:22px;
   font-size:60px;
   display:none;
+  z-index:8;
   animation:spin 5s linear infinite;
-  z-index:6;
 }
 
 @keyframes spin{
@@ -119,11 +130,11 @@ button:hover{
 
 .weather-emoji{
   position:absolute;
-  right:22px;
+  right:20px;
   bottom:20px;
-  font-size:65px;
+  font-size:66px;
   display:none;
-  z-index:7;
+  z-index:9;
   animation:bounce 1s infinite alternate;
 }
 
@@ -135,25 +146,25 @@ button:hover{
   position:absolute;
   inset:0;
   display:none;
-  z-index:5;
+  z-index:6;
 }
 
 .drop{
   position:absolute;
   width:2px;
-  height:25px;
+  height:26px;
   background:rgba(255,255,255,.9);
   animation:rainFall .75s linear infinite;
 }
 
 @keyframes rainFall{
   from{transform:translateY(-40px)}
-  to{transform:translateY(300px)}
+  to{transform:translateY(310px)}
 }
 
 .wind-line{
   position:absolute;
-  width:130px;
+  width:135px;
   height:3px;
   background:rgba(255,255,255,.9);
   border-radius:30px;
@@ -162,11 +173,11 @@ button:hover{
 
 @keyframes windMove{
   from{transform:translateX(-160px)}
-  to{transform:translateX(750px)}
+  to{transform:translateX(760px)}
 }
 
 .dust{
-  background:rgba(90,80,70,.32);
+  background:rgba(88,75,60,.34);
   backdrop-filter:blur(2px);
 }
 
@@ -175,7 +186,7 @@ button:hover{
   width:9px;
   height:9px;
   border-radius:50%;
-  background:rgba(80,70,60,.45);
+  background:rgba(70,60,50,.48);
   animation:dustMove 3s infinite alternate;
 }
 
@@ -187,10 +198,37 @@ button:hover{
   filter:brightness(.65);
 }
 
-.result,.message,.tip,.score,.update{
-  margin-top:18px;
+.card{
+  margin-top:17px;
+  padding:15px;
+  border-radius:18px;
+  background:rgba(255,255,255,.8);
   line-height:1.7;
+  box-shadow:0 4px 14px rgba(0,0,0,.08);
   opacity:0;
+}
+
+.message{
+  font-size:21px;
+  font-weight:bold;
+  color:#1b5e20;
+}
+
+.score{
+  font-weight:bold;
+  color:#2e7d32;
+  font-size:19px;
+}
+
+.action{
+  background:#eefaf0;
+  border-left:7px solid #43a047;
+  text-align:left;
+}
+
+.source,.update{
+  font-size:13px;
+  color:#555;
 }
 
 .show{
@@ -202,46 +240,23 @@ button:hover{
   to{opacity:1;transform:translateY(0)}
 }
 
-.message{
-  font-size:21px;
-  font-weight:bold;
-  color:#1b5e20;
-}
-
-.tip{
-  background:#eefaf0;
-  padding:13px;
-  border-radius:16px;
-  border-left:6px solid #43a047;
-}
-
-.score{
-  font-weight:bold;
-  color:#2e7d32;
-}
-
-.source,.update{
-  font-size:13px;
-  color:#555;
-}
-
 @media(max-width:600px){
-  .scene{
-    height:220px;
-  }
+  h1{font-size:27px}
+  .scene{height:225px}
+  .clean,.plant{font-size:48px}
 }
 </style>
 </head>
 
 <body>
 
-<div class="city-bg"></div>
+<div class="bg"></div>
 <div class="clean">🧹✨</div>
 <div class="plant">🪴</div>
 
 <div class="app">
   <h1>🌿 생팸 Clean Air</h1>
-  <p id="date"></p>
+  <p id="date" class="subtitle"></p>
   <p>베트남 교실 청결과 건강한 환기를 위한 날씨 추천 앱</p>
 
   <select id="city">
@@ -260,28 +275,28 @@ button:hover{
     <div class="weather-emoji" id="emoji"></div>
   </div>
 
-  <div class="result" id="result"></div>
-  <div class="score" id="score"></div>
-  <div class="message" id="message"></div>
-  <div class="tip" id="tip"></div>
-  <div class="update" id="update"></div>
+  <div class="card" id="result"></div>
+  <div class="card score" id="score"></div>
+  <div class="card message" id="message"></div>
+  <div class="card action" id="action"></div>
+  <div class="card update" id="update"></div>
 </div>
 
 <script>
 const cityStyles = {
   hanoi:{
     name:"하노이",
-    image:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80",
+    image:"hanoi.jpg",
     fallback:"linear-gradient(135deg,#a5d6a7,#2e7d32)"
   },
   hochiminh:{
     name:"호치민",
-    image:"https://images.unsplash.com/photo-1583417319070-4a69db38a482?auto=format&fit=crop&w=1200&q=80",
+    image:"hcm.jpg",
     fallback:"linear-gradient(135deg,#ffcc80,#ef6c00)"
   },
   danang:{
     name:"다낭",
-    image:"https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?auto=format&fit=crop&w=1200&q=80",
+    image:"danang.jpg",
     fallback:"linear-gradient(135deg,#80deea,#00838f)"
   }
 };
@@ -297,7 +312,7 @@ document.getElementById("date").innerText =
 function makeRain(){
   const rain=document.getElementById("rain");
   rain.innerHTML="";
-  for(let i=0;i<55;i++){
+  for(let i=0;i<60;i++){
     const d=document.createElement("div");
     d.className="drop";
     d.style.left=Math.random()*100+"%";
@@ -321,7 +336,7 @@ function makeWind(){
 function makeDust(){
   const dust=document.getElementById("dust");
   dust.innerHTML="";
-  for(let i=0;i<35;i++){
+  for(let i=0;i<40;i++){
     const p=document.createElement("div");
     p.className="dust-particle";
     p.style.left=Math.random()*100+"%";
@@ -338,7 +353,7 @@ makeDust();
 document.getElementById("city").addEventListener("change",checkAir);
 
 function clearScreen(){
-  ["result","message","tip","score","update"].forEach(id=>{
+  ["result","score","message","action","update"].forEach(id=>{
     const el=document.getElementById(id);
     el.classList.remove("show");
     el.innerHTML="";
@@ -409,45 +424,82 @@ async function checkAir(){
     scene.style.display="block";
     scene.style.backgroundImage =
       `linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.08)), url('${city.image}'), ${city.fallback}`;
-    scene.style.backgroundSize="cover";
-    scene.style.backgroundPosition="center";
     scene.style.setProperty("--cityname",`"${city.name}"`);
 
     let emoji="";
     let message="";
-    let tip="";
+    let action="";
 
     if(pm25>35 || aqi>100){
       document.getElementById("dust").style.display="block";
       emoji="😷";
       message="초미세먼지나 공기질이 좋지 않아요.";
-      tip="오늘은 창문을 오래 열지 않는 것이 좋습니다. 마스크 착용을 권장하고, 교실 청소와 식물 관리에 집중하세요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ❌ 긴 시간 환기 금지<br>
+        ✅ 마스크 착용 권장<br>
+        ✅ 교실 바닥 먼지 정리하기<br>
+        ✅ 싱고니움 상태 확인하기<br>
+        ✅ 쓰레기 줍고 교실 청결 유지하기
+      `;
       scene.classList.add("dark");
     }
     else if(rain>0){
       document.getElementById("rain").style.display="block";
       emoji="☔";
       message="비가 오고 있어요. 환기는 짧게 하는 게 좋아요.";
-      tip="습도가 높아질 수 있으니 창문을 오래 열기보다는 5~10분 정도만 짧게 환기하세요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ✅ 창문 5~10분만 짧게 열기<br>
+        ✅ 젖은 우산 정리하기<br>
+        ✅ 바닥 미끄럼 주의하기<br>
+        ✅ 교실 습도 확인하기<br>
+        ✅ 쓰레기통 주변 정리하기
+      `;
       scene.classList.add("dark");
     }
     else if(wind>=25){
       document.getElementById("wind").style.display="block";
       emoji="🌬️";
       message="바람이 강해요. 창문을 조심해서 열어야 해요.";
-      tip="문이 세게 닫힐 수 있으니 창문을 조금만 열고, 주변 물건을 먼저 정리하세요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ✅ 창문 조금만 열기<br>
+        ✅ 문 세게 닫힘 주의하기<br>
+        ✅ 책상 위 종이 정리하기<br>
+        ✅ 쓰레기 줍기<br>
+        ✅ 식물이 넘어지지 않게 확인하기
+      `;
     }
-    else{
+    else if(score>=80){
       document.getElementById("sun").style.display="block";
       emoji="🌞";
       message="오늘은 환기하기 좋은 날씨네요!";
-      tip="창문을 15~20분 정도 열어 교실 공기를 바꿔보세요. 싱고니움에게도 좋은 날이에요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ✅ 창문 15~20분 열기<br>
+        ✅ 교실 쓰레기 줍기<br>
+        ✅ 싱고니움 햇빛 확인하기<br>
+        ✅ 깨끗한 공기 유지하기<br>
+        ✅ 친구들에게 환기 시간 알려주기
+      `;
+    }
+    else{
+      emoji="🙂";
+      message="짧게 환기하기에는 괜찮은 날이에요.";
+      action=`
+        <strong>오늘 추천 행동</strong><br>
+        ✅ 창문 10분 정도 열기<br>
+        ✅ 교실 바닥 확인하기<br>
+        ✅ 식물 상태 확인하기<br>
+        ✅ 쓰레기 줍기
+      `;
     }
 
     document.getElementById("emoji").innerText=emoji;
     document.getElementById("emoji").style.display="block";
 
-    const now = new Date();
+    const now=new Date();
 
     document.getElementById("result").innerHTML=`
       <strong>${cityName} 현재 상태</strong><br>
@@ -459,17 +511,17 @@ async function checkAir(){
       초미세먼지(PM2.5): ${pm25}㎍/㎥<br>
       미세먼지(PM10): ${pm10}㎍/㎥<br>
       공기질 지수(AQI): ${aqi}<br>
-      <div class="source">자료 출처: Open-Meteo Weather & Air Quality API / 도시 사진: Unsplash</div>
+      <div class="source">자료 출처: Open-Meteo Weather & Air Quality API</div>
     `;
 
     document.getElementById("score").innerText=`환기 점수: ${score}점 / 100점`;
     document.getElementById("message").innerText=message;
-    document.getElementById("tip").innerText=tip;
+    document.getElementById("action").innerHTML=action;
     document.getElementById("update").innerText=
       `마지막 확인: ${now.toLocaleTimeString("ko-KR")} / 5분마다 자동 재측정`;
 
     setTimeout(()=>{
-      ["result","score","message","tip","update"].forEach(id=>{
+      ["result","score","message","action","update"].forEach(id=>{
         document.getElementById(id).classList.add("show");
       });
     },100);
@@ -482,8 +534,7 @@ async function checkAir(){
 }
 
 checkAir();
-
-setInterval(checkAir, 5 * 60 * 1000);
+setInterval(checkAir,5*60*1000);
 </script>
 
 </body>
