@@ -1,0 +1,15 @@
+{
+  "name": "생팸 CLEAN AIR",
+  "short_name": "Clean Air",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#d7f7d2",
+  "theme_color": "#43a047",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
