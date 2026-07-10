@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "saengfam-clean-airy",
+  "name": "saengfam-clean-air",
   "compatibility_date": "2026-07-07",
   "observability": {
     "enabled": true
