@@ -349,7 +349,7 @@ color:#2e7d32;
       <option value="16.0544,108.2022,다낭,danang">🇻🇳 다낭</option>
     </select>
 
-    <button onclick="checkAir()">환기 추천 확인하기</button>
+    <button id="checkButton" onclick="checkAir()">환기 추천 확인하기</button>
 
     <div class="scene" id="scene">
       <div class="sun" id="sun">☀️</div>
@@ -373,6 +373,10 @@ color:#2e7d32;
 </div>
 
 <script>
+  let latestRequestId = 0;
+let activeController = null;
+let isLoading = false;
+  
 const cityStyles = {
   hanoi:{name:"하노이",image:"hanoi.jpg",fallback:"linear-gradient(135deg,#a5d6a7,#2e7d32)"},
   hochiminh:{name:"호치민",image:"hcm.jpg",fallback:"linear-gradient(135deg,#ffcc80,#ef6c00)"},
@@ -482,10 +486,25 @@ function scoreCalc(pm25,aqi,rain,wind,humidity,code){
 }
 
 async function checkAir(){
+  const requestId = ++latestRequestId;
+
+  if(activeController){
+    activeController.abort();
+  }
+
+  activeController = new AbortController();
+  const signal = activeController.signal;
+
+  const selectedValue = document.getElementById("city").value;
+  const [lat,lon,cityName,cityKey] = selectedValue.split(",");
+
+  const button = document.getElementById("checkButton");
+
+  isLoading = true;
+  button.disabled = true;
+  button.innerText = "측정 중...";
+
   clearScreen();
-
-  const [lat,lon,cityName,cityKey]=document.getElementById("city").value.split(",");
-
   const weatherUrl =
   `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,precipitation,weather_code&timezone=auto&forecast_days=1`;
 
@@ -493,11 +512,21 @@ async function checkAir(){
   `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lon}&current=pm2_5,pm10,us_aqi&timezone=auto&forecast_days=1`;
 
   try{
-    const [weatherResponse,airResponse]=await Promise.all([fetch(weatherUrl),fetch(airUrl)]);
+    const [weatherResponse,airResponse] = await Promise.all([
+  fetch(weatherUrl, { signal, cache:"no-store" }),
+  fetch(airUrl, { signal, cache:"no-store" })
+]);
     if(!weatherResponse.ok || !airResponse.ok) throw new Error("API error");
 
     const weatherData=await weatherResponse.json();
     const airData=await airResponse.json();
+    if(requestId !== latestRequestId) return;
+
+    if(document.getElementById("city").value !== selectedValue) return;
+
+    if(!weatherData.current || !airData.current){
+  throw new Error("필수 데이터 없음");
+}
 
     const temp=weatherData.current.temperature_2m;
     const humidity=weatherData.current.relative_humidity_2m;
@@ -675,16 +704,36 @@ ${scoreText}
         document.getElementById(id).classList.add("show");
       });
     },100);
+}catch(error){
+  if(error.name === "AbortError"){
+    return;
+  }
 
-  }catch(error){
-    document.getElementById("message").innerText =
-      "날씨 정보를 불러오지 못했습니다. 인터넷 연결 또는 API 상태를 확인해주세요.";
-    document.getElementById("message").classList.add("show");
+  const messageBox = document.getElementById("message");
+
+  messageBox.innerText =
+    "날씨 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.";
+
+  messageBox.style.opacity = "1";
+  messageBox.classList.add("show");
+
+  console.error("날씨 데이터 오류:", error);
+
+}finally{
+  if(requestId === latestRequestId){
+    isLoading = false;
+    button.disabled = false;
+    button.innerText = "환기 추천 확인하기";
   }
 }
 
+}
+
 setInterval(()=>{
-  if(document.getElementById("mainScreen").style.display==="block"){
+  const mainVisible =
+    document.getElementById("mainScreen").style.display === "block";
+
+  if(mainVisible && !isLoading){
     checkAir();
   }
 },5*60*1000);
